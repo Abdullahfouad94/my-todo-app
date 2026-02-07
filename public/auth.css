@@ -1,0 +1,196 @@
+.auth-container {
+    background: var(--card-bg);
+    padding: 36px;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    margin: 80px auto 0;
+    transition: background-color 0.3s;
+}
+
+.auth-container h1 {
+    text-align: center;
+    margin-bottom: 8px;
+    color: var(--text);
+    font-size: 26px;
+}
+
+.auth-subtitle {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.auth-container form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.auth-container input {
+    padding: 12px 16px;
+    border: 2px solid var(--input-border);
+    border-radius: 8px;
+    font-size: 15px;
+    outline: none;
+    background: var(--card-bg);
+    color: var(--text);
+    transition: border-color 0.2s;
+}
+
+.auth-container input:focus {
+    border-color: var(--accent);
+}
+
+.auth-container button[type="submit"] {
+    padding: 12px;
+    background-color: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.auth-container button[type="submit"]:hover {
+    background-color: var(--accent-hover);
+}
+
+.auth-container button[type="submit"]:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.auth-divider {
+    display: flex;
+    align-items: center;
+    margin: 20px 0;
+    gap: 12px;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+}
+
+.auth-divider span {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.github-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 12px;
+    background-color: #24292e;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.github-btn:hover {
+    background-color: #2f363d;
+}
+
+body.dark .github-btn {
+    background-color: #333;
+    border: 1px solid #555;
+}
+
+body.dark .github-btn:hover {
+    background-color: #444;
+}
+
+.auth-link {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+.auth-link a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.auth-link a:hover {
+    text-decoration: underline;
+}
+
+.auth-error {
+    display: none;
+    background: #ffeef0;
+    color: #d32f2f;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 14px;
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+body.dark .auth-error {
+    background: #3a1b1b;
+    color: #ff6b6b;
+}
+
+.auth-success {
+    display: none;
+    background: #e8f5e9;
+    color: #2e7d32;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 14px;
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+body.dark .auth-success {
+    background: #1b3a1b;
+    color: #69f0ae;
+}
+
+.resend-btn {
+    display: block;
+    width: 100%;
+    margin-top: 12px;
+    padding: 10px;
+    background: none;
+    border: 2px solid var(--accent);
+    color: var(--accent);
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.resend-btn:hover:not(:disabled) {
+    background-color: var(--accent);
+    color: #fff;
+}
+
+.resend-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+#otp-input {
+    text-align: center;
+    font-size: 24px;
+    letter-spacing: 8px;
+    font-weight: 700;
+}

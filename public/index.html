@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My To-Do List</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>My To-Do List</h1>
+            <div class="header-actions">
+                <span id="user-display"></span>
+                <button id="logout-btn" title="Logout">Logout</button>
+                <button id="dark-mode-toggle" title="Toggle dark mode">&#9790;</button>
+            </div>
+        </div>
+
+        <form id="todo-form">
+            <div class="form-row">
+                <input type="text" id="todo-input" placeholder="Add a new task..." required>
+                <button type="submit" id="add-btn">Add</button>
+            </div>
+            <div class="form-options">
+                <select id="input-priority">
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                    <option value="low">Low</option>
+                </select>
+                <input type="text" id="input-category" placeholder="Category...">
+                <input type="date" id="input-due-date">
+            </div>
+        </form>
+
+        <div class="filter-toolbar">
+            <input type="text" id="filter-search" placeholder="Search tasks...">
+            <select id="filter-priority">
+                <option value="">All Priorities</option>
+                <option value="high">High</option>
+                <option value="medium">Medium</option>
+                <option value="low">Low</option>
+            </select>
+            <select id="filter-category">
+                <option value="">All Categories</option>
+            </select>
+            <select id="filter-status">
+                <option value="">All Status</option>
+                <option value="active">Active</option>
+                <option value="completed">Completed</option>
+            </select>
+        </div>
+
+        <div class="counter-bar">
+            <span>Total: <strong id="count-total">0</strong></span>
+            <span>Done: <strong id="count-done">0</strong></span>
+            <span>Remaining: <strong id="count-remaining">0</strong></span>
+        </div>
+
+        <ul id="todo-list"></ul>
+        <p id="empty-message">No tasks yet. Add one above!</p>
+
+        <div class="stats-section">
+            <span>Completed today: <strong id="stat-today">0</strong></span>
+            <span>This week: <strong id="stat-week">0</strong></span>
+        </div>
+
+        <button id="clear-completed-btn" class="clear-completed-btn">Clear Completed</button>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

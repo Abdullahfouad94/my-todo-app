@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl:*)",
+      "Bash(python3:*)",
+      "Bash(lsof:*)",
+      "Bash(xargs kill:*)",
+      "Bash(node:*)",
+      "Bash(TOKEN=\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjFkNGZhOGZiLWIzODMtNDcxYi04ZTgwLWEyNDhlMTczNjQ4ZiIsInVzZXJuYW1lIjoidGVzdHVzZXIiLCJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJpYXQiOjE3NzA0ODI4NDEsImV4cCI6MTc3MTA4NzY0MX0.yHXmDJdrIngsOYcGWkc3eNLQ4Rlk3IK2-6Jvs6r-VN0\")",
+      "Bash(npm install:*)",
+      "Bash(sqlite3:*)",
+      "Bash(TOKEN=\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjU1ODlmNWVjLWJiMDQtNDM0YS1iMGY0LWVlYjRlYTI3YjVjZiIsInVzZXJuYW1lIjoic3FsaXRldGVzdCIsImVtYWlsIjoic3FsaXRlQHRlc3QuY29tIiwiaWF0IjoxNzcwNDg1MTQ3LCJleHAiOjE3NzEwODk5NDd9.sfW2_KM6oWxkPc7LUKq6o9fqjNHZLHXZxfBHaSFf_lg\")",
+      "Bash(git -C /Users/abdullahfouad/projects/my-first-project status)",
+      "Bash(git -C /Users/abdullahfouad/projects/my-first-project init:*)",
+      "Bash(gh auth:*)",
+      "Bash(git add:*)"
+    ]
+  }
+}
