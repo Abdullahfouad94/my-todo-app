@@ -65,7 +65,10 @@ router.post("/register", async (req, res) => {
             await sendOTPEmail(newUser.email, newUser.username, otp);
         } catch (emailErr) {
             console.error("Email send error:", emailErr.message);
-            // User is registered but email failed — they can use resend-otp later
+            return res.status(201).json({
+                message: "Registration successful, but we could not send the verification email. Use 'Resend Code' on the verification page to try again.",
+                emailFailed: true,
+            });
         }
 
         res.status(201).json({ message: "Registration successful. Check your email for the verification code." });

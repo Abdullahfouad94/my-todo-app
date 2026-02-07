@@ -23,12 +23,17 @@ async function sendOTPEmail(toEmail, username, otp) {
     // Use Resend API if RESEND_API_KEY is set (works on cloud platforms)
     if (process.env.RESEND_API_KEY) {
         const resend = new Resend(process.env.RESEND_API_KEY);
-        await resend.emails.send({
+        const { data, error } = await resend.emails.send({
             from: process.env.RESEND_FROM || "My To-Do App <onboarding@resend.dev>",
             to: toEmail,
             subject: "Verify Your Email - My To-Do App",
             html: buildHTML(username, otp),
         });
+        if (error) {
+            console.error("Resend API error:", error);
+            throw new Error(error.message || "Failed to send email via Resend");
+        }
+        console.log("Email sent via Resend:", data?.id);
         return;
     }
 
