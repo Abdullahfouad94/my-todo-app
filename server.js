@@ -17,6 +17,11 @@ app.get("/health", (req, res) => {
     res.status(200).json({ status: "ok" });
 });
 
+// Redirect old auth pages to home
+app.get(["/login.html", "/register.html", "/verify.html"], (req, res) => {
+    res.redirect("/");
+});
+
 app.use("/api/tasks", taskRoutes);
 app.use("/api/prompts", promptRoutes);
 app.use("/api/templates", templateRoutes);
