@@ -5,6 +5,8 @@ const path = require("path");
 const authMiddleware = require("./middleware/auth");
 const authRoutes = require("./routes/auth");
 const taskRoutes = require("./routes/tasks");
+const promptRoutes = require("./routes/prompts");
+const templateRoutes = require("./routes/templates");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -22,6 +24,12 @@ app.use("/api/auth", authRoutes);
 
 // Task routes (protected)
 app.use("/api/tasks", authMiddleware, taskRoutes);
+
+// Prompt routes (protected)
+app.use("/api/prompts", authMiddleware, promptRoutes);
+
+// Template routes (protected)
+app.use("/api/templates", authMiddleware, templateRoutes);
 
 const server = app.listen(PORT, "0.0.0.0", () => {
     console.log(`Server running at http://0.0.0.0:${PORT}`);

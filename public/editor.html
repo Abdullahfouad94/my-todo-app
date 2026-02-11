@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompt Editor - PromptCraft</title>
+    <link rel="stylesheet" href="prompts.css">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/prompts.html" class="navbar-brand">PromptCraft</a>
+        <ul class="navbar-links">
+            <li><a href="/prompts.html">My Prompts</a></li>
+            <li><a href="/templates.html">Templates</a></li>
+        </ul>
+        <div class="navbar-right">
+            <span id="user-display"></span>
+            <button id="dark-mode-toggle" title="Toggle dark mode">&#9790;</button>
+            <button id="logout-btn">Logout</button>
+        </div>
+    </nav>
+
+    <div class="page" style="max-width:1200px">
+        <div class="page-header">
+            <div>
+                <h1 id="editor-page-title">New Prompt</h1>
+                <p>Fill in the sections below — use <code>{{variable_name}}</code> for dynamic values</p>
+            </div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap">
+                <a href="/prompts.html" class="btn btn-secondary" id="cancel-btn">Cancel</a>
+                <button class="btn btn-primary" id="save-btn">Save Prompt</button>
+            </div>
+        </div>
+
+        <div class="editor-layout">
+            <!-- LEFT: Editor -->
+            <div class="editor-panel">
+                <div class="panel-header">
+                    <h2>Prompt Editor</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="title">Title *</label>
+                            <input type="text" id="title" placeholder="e.g. Customer Support Agent v2" maxlength="120">
+                        </div>
+                        <div class="form-group">
+                            <label for="category">Category</label>
+                            <select id="category">
+                                <option value="">— Select —</option>
+                                <option value="Agent">Agent</option>
+                                <option value="Content">Content</option>
+                                <option value="Product">Product</option>
+                                <option value="Research">Research</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tags">Tags <small style="font-weight:normal;text-transform:none">(comma-separated)</small></label>
+                        <input type="text" id="tags" placeholder="e.g. support, chatbot, v2">
+                    </div>
+
+                    <div class="section-divider">Prompt Sections</div>
+
+                    <div class="form-group">
+                        <label for="sec-role">Role — "You are a..."</label>
+                        <textarea id="sec-role" placeholder="Describe the agent's identity and expertise. e.g. You are a helpful customer support agent for {{company_name}}."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="sec-context">Context — Background information</label>
+                        <textarea id="sec-context" class="tall" placeholder="Provide the situation, relevant knowledge, or background the agent should know."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="sec-task">Task — What to do</label>
+                        <textarea id="sec-task" class="tall" placeholder="Clearly describe the main job or objective of the agent/prompt."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="sec-constraints">Constraints — Rules &amp; guardrails</label>
+                        <textarea id="sec-constraints" placeholder="What the agent must NOT do, tone guidelines, limits, etc."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="sec-output">Output Format — Expected response format</label>
+                        <textarea id="sec-output" placeholder="Describe the structure, length, or style of the expected output."></textarea>
+                    </div>
+
+                    <div class="section-divider">Variables</div>
+
+                    <p style="font-size:13px;color:var(--text-secondary)">
+                        Define variables you used in the sections above (e.g. <code>company_name</code> for <code>{{company_name}}</code>).
+                    </p>
+
+                    <div class="variable-list" id="variable-list"></div>
+
+                    <button class="btn btn-secondary btn-sm" id="add-var-btn" style="margin-top:4px">+ Add Variable</button>
+                </div>
+            </div>
+
+            <!-- RIGHT: Preview -->
+            <div class="preview-panel">
+                <div class="panel-header">
+                    <h2>Live Preview</h2>
+                    <button class="btn btn-secondary btn-sm" id="copy-btn">Copy</button>
+                </div>
+                <div class="panel-body">
+                    <!-- Variable fill-in -->
+                    <div id="var-fill-section" class="hidden">
+                        <div class="section-divider" style="margin-bottom:12px">Fill Variables</div>
+                        <div class="var-fill-section" id="var-fill-inputs"></div>
+                    </div>
+
+                    <!-- Quality hints -->
+                    <div id="hints-section">
+                        <div class="section-divider" style="margin-bottom:12px">Quality Hints</div>
+                        <div class="hints-list" id="hints-list"></div>
+                    </div>
+
+                    <!-- Rendered prompt -->
+                    <div class="section-divider" style="margin-bottom:12px">Assembled Prompt</div>
+                    <pre class="preview-output" id="preview-output"><span class="preview-placeholder">Your prompt will appear here as you fill in the sections...</span></pre>
+                    <div class="token-count" id="token-count"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="editor-page.js"></script>
+</body>
+</html>

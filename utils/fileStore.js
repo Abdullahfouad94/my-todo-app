@@ -39,6 +39,18 @@ db.exec(`
         userId TEXT NOT NULL,
         sortOrder INTEGER
     );
+
+    CREATE TABLE IF NOT EXISTS prompts (
+        id TEXT PRIMARY KEY,
+        userId TEXT NOT NULL,
+        title TEXT NOT NULL,
+        category TEXT NOT NULL DEFAULT '',
+        sections TEXT NOT NULL DEFAULT '{}',
+        tags TEXT NOT NULL DEFAULT '',
+        variableDefinitions TEXT NOT NULL DEFAULT '[]',
+        createdAt TEXT NOT NULL,
+        updatedAt TEXT NOT NULL
+    );
 `);
 
 // --- Users ---
@@ -135,4 +147,46 @@ function writeTasks(tasks) {
     transaction(tasks);
 }
 
-module.exports = { readTasks, writeTasks, readUsers, writeUsers };
+// --- Prompts ---
+
+function deserializePrompt(row) {
+    if (!row) return null;
+    return {
+        ...row,
+        sections: JSON.parse(row.sections || "{}"),
+        variableDefinitions: JSON.parse(row.variableDefinitions || "[]"),
+    };
+}
+
+function readPrompts() {
+    const rows = db.prepare("SELECT * FROM prompts ORDER BY updatedAt DESC").all();
+    return rows.map(deserializePrompt);
+}
+
+function writePrompt(prompt) {
+    db.prepare(`
+        INSERT OR REPLACE INTO prompts (id, userId, title, category, sections, tags, variableDefinitions, createdAt, updatedAt)
+        VALUES (@id, @userId, @title, @category, @sections, @tags, @variableDefinitions, @createdAt, @updatedAt)
+    `).run({
+        id: prompt.id,
+        userId: prompt.userId,
+        title: prompt.title,
+        category: prompt.category || "",
+        sections: JSON.stringify(prompt.sections || {}),
+        tags: prompt.tags || "",
+        variableDefinitions: JSON.stringify(prompt.variableDefinitions || []),
+        createdAt: prompt.createdAt,
+        updatedAt: prompt.updatedAt,
+    });
+}
+
+function deletePrompt(id) {
+    db.prepare("DELETE FROM prompts WHERE id = ?").run(id);
+}
+
+function getPrompt(id, userId) {
+    const row = db.prepare("SELECT * FROM prompts WHERE id = ? AND userId = ?").get(id, userId);
+    return deserializePrompt(row);
+}
+
+module.exports = { readTasks, writeTasks, readUsers, writeUsers, readPrompts, writePrompt, deletePrompt, getPrompt };

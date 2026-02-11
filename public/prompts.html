@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Prompts - PromptCraft</title>
+    <link rel="stylesheet" href="prompts.css">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/prompts.html" class="navbar-brand">PromptCraft</a>
+        <ul class="navbar-links">
+            <li><a href="/prompts.html" class="active">My Prompts</a></li>
+            <li><a href="/templates.html">Templates</a></li>
+        </ul>
+        <div class="navbar-right">
+            <span id="user-display"></span>
+            <button id="dark-mode-toggle" title="Toggle dark mode">&#9790;</button>
+            <button id="logout-btn">Logout</button>
+        </div>
+    </nav>
+
+    <div class="page">
+        <div class="page-header">
+            <div>
+                <h1>My Prompts</h1>
+                <p>Your saved prompts library</p>
+            </div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap">
+                <a href="/templates.html" class="btn btn-secondary">Browse Templates</a>
+                <a href="/editor.html" class="btn btn-primary">+ New Prompt</a>
+            </div>
+        </div>
+
+        <div class="search-bar">
+            <input type="text" id="search-input" placeholder="Search prompts...">
+            <select id="category-filter">
+                <option value="">All Categories</option>
+                <option value="Agent">Agent</option>
+                <option value="Content">Content</option>
+                <option value="Product">Product</option>
+                <option value="Research">Research</option>
+                <option value="Other">Other</option>
+            </select>
+        </div>
+
+        <div class="cards-grid" id="prompts-grid"></div>
+
+        <div class="empty-state hidden" id="empty-state">
+            <h3>No prompts yet</h3>
+            <p>Create your first prompt or start from a template.</p>
+            <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+                <a href="/templates.html" class="btn btn-secondary">Browse Templates</a>
+                <a href="/editor.html" class="btn btn-primary">+ New Prompt</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete confirm modal -->
+    <div class="modal-overlay" id="delete-modal">
+        <div class="modal">
+            <h3>Delete Prompt</h3>
+            <p>Are you sure you want to delete "<span id="delete-prompt-title"></span>"? This cannot be undone.</p>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" id="cancel-delete">Cancel</button>
+                <button class="btn btn-danger" id="confirm-delete">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="prompts-page.js"></script>
+</body>
+</html>
