@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Templates - PromptCraft</title>
+    <link rel="stylesheet" href="prompts.css">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/prompts.html" class="navbar-brand">PromptCraft</a>
+        <ul class="navbar-links">
+            <li><a href="/prompts.html">My Prompts</a></li>
+            <li><a href="/templates.html" class="active">Templates</a></li>
+        </ul>
+        <div class="navbar-right">
+            <span id="user-display"></span>
+            <button id="dark-mode-toggle" title="Toggle dark mode">&#9790;</button>
+            <button id="logout-btn">Logout</button>
+        </div>
+    </nav>
+
+    <div class="page">
+        <div class="page-header">
+            <div>
+                <h1>Prompt Templates</h1>
+                <p>Start from a pre-built template — customise it for your product</p>
+            </div>
+        </div>
+
+        <div class="category-tabs" id="category-tabs">
+            <button class="category-tab active" data-category="">All</button>
+            <button class="category-tab" data-category="Agent">Agent</button>
+            <button class="category-tab" data-category="Content">Content</button>
+            <button class="category-tab" data-category="Product">Product</button>
+            <button class="category-tab" data-category="Research">Research</button>
+        </div>
+
+        <div class="cards-grid" id="templates-grid"></div>
+
+        <div class="empty-state hidden" id="empty-state">
+            <h3>No templates in this category</h3>
+            <p>Try a different category filter above.</p>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="templates-page.js"></script>
+</body>
+</html>
