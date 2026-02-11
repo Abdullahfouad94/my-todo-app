@@ -123,7 +123,8 @@ if (registerForm) {
                 return;
             }
 
-            window.location.href = `/verify.html?email=${encodeURIComponent(email)}`;
+            setToken(data.token);
+            window.location.href = "/index.html";
         } catch (err) {
             showError("register-error", "Network error. Please try again.");
             submitBtn.disabled = false;

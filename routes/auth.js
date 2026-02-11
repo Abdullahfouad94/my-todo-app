@@ -44,16 +44,15 @@ router.post("/register", async (req, res) => {
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        const otp = generateOTP();
 
         const newUser = {
             id: uuidv4(),
             username: username.trim(),
             email: email.toLowerCase(),
             password: hashedPassword,
-            verified: false,
-            otp,
-            otpExpires: Date.now() + 10 * 60 * 1000,
+            verified: true,
+            otp: null,
+            otpExpires: null,
             githubId: null,
             createdAt: new Date().toISOString(),
         };
@@ -61,14 +60,8 @@ router.post("/register", async (req, res) => {
         users.push(newUser);
         writeUsers(users);
 
-        try {
-            await sendOTPEmail(newUser.email, newUser.username, otp);
-        } catch (emailErr) {
-            console.error("Email send error:", emailErr.message);
-            // User is registered but email failed — they can use resend-otp later
-        }
-
-        res.status(201).json({ message: "Registration successful. Check your email for the verification code." });
+        const token = generateToken(newUser);
+        res.status(201).json({ token, user: { id: newUser.id, username: newUser.username, email: newUser.email } });
     } catch (err) {
         console.error("Register error:", err);
         res.status(500).json({ error: "Registration failed. Please try again." });
