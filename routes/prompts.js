@@ -7,12 +7,12 @@ const router = express.Router();
 // GET /api/prompts
 router.get("/", (req, res) => {
     const all = readPrompts();
-    res.json(all.filter(p => p.userId === req.user.id));
+    res.json(all.filter(p => p.userId === "default"));
 });
 
 // GET /api/prompts/:id
 router.get("/:id", (req, res) => {
-    const prompt = getPrompt(req.params.id, req.user.id);
+    const prompt = getPrompt(req.params.id, "default");
     if (!prompt) return res.status(404).json({ error: "Prompt not found" });
     res.json(prompt);
 });
@@ -24,7 +24,7 @@ router.post("/", (req, res) => {
     const now = new Date().toISOString();
     const prompt = {
         id: uuidv4(),
-        userId: req.user.id,
+        userId: "default",
         title: title.trim(),
         category: category || "",
         sections: sections || {},
@@ -39,7 +39,7 @@ router.post("/", (req, res) => {
 
 // PUT /api/prompts/:id
 router.put("/:id", (req, res) => {
-    const prompt = getPrompt(req.params.id, req.user.id);
+    const prompt = getPrompt(req.params.id, "default");
     if (!prompt) return res.status(404).json({ error: "Prompt not found" });
 
     const { title, category, sections, tags, variableDefinitions } = req.body;
@@ -56,7 +56,7 @@ router.put("/:id", (req, res) => {
 
 // DELETE /api/prompts/:id
 router.delete("/:id", (req, res) => {
-    const prompt = getPrompt(req.params.id, req.user.id);
+    const prompt = getPrompt(req.params.id, "default");
     if (!prompt) return res.status(404).json({ error: "Prompt not found" });
     deletePrompt(req.params.id);
     res.status(204).send();

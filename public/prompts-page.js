@@ -1,6 +1,3 @@
-// --- Auth guard ---
-const token = localStorage.getItem("token");
-if (!token) { window.location.href = "/login.html"; }
 
 // --- Dark mode ---
 if (localStorage.getItem("darkMode") === "true") document.body.classList.add("dark");
@@ -10,14 +7,7 @@ document.getElementById("dark-mode-toggle").addEventListener("click", () => {
     const isDark = document.body.classList.toggle("dark");
     localStorage.setItem("darkMode", isDark);
 });
-document.getElementById("logout-btn").addEventListener("click", () => {
-    localStorage.removeItem("token");
-    window.location.href = "/login.html";
-});
 
-function authHeaders() {
-    return { "Content-Type": "application/json", Authorization: "Bearer " + token };
-}
 
 function showToast(msg, type = "") {
     const t = document.getElementById("toast");
@@ -55,13 +45,10 @@ let deleteTargetId = null;
 // --- Load ---
 async function loadPrompts() {
     try {
-        const res = await fetch("/api/prompts", { headers: authHeaders() });
-        if (res.status === 401) { window.location.href = "/login.html"; return; }
+        const res = await fetch("/api/prompts", { headers: { "Content-Type": "application/json" } });
         allPrompts = await res.json();
         renderPrompts();
 
-        const payload = JSON.parse(atob(token.split(".")[1]));
-        document.getElementById("user-display").textContent = payload.username || payload.email || "";
     } catch (e) {
         showToast("Failed to load prompts", "error");
     }
@@ -136,7 +123,7 @@ async function duplicatePrompt(id) {
     try {
         const res = await fetch("/api/prompts", {
             method: "POST",
-            headers: authHeaders(),
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 title: prompt.title + " (copy)",
                 category: prompt.category,
@@ -172,7 +159,7 @@ document.getElementById("confirm-delete").addEventListener("click", async () => 
     try {
         const res = await fetch(`/api/prompts/${deleteTargetId}`, {
             method: "DELETE",
-            headers: authHeaders(),
+            headers: { "Content-Type": "application/json" },
         });
         if (!res.ok) throw new Error();
         allPrompts = allPrompts.filter(p => p.id !== deleteTargetId);

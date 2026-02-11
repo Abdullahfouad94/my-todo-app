@@ -1,6 +1,3 @@
-// --- Auth guard ---
-const token = localStorage.getItem("token");
-if (!token) { window.location.href = "/login.html"; }
 
 // --- Dark mode ---
 if (localStorage.getItem("darkMode") === "true") document.body.classList.add("dark");
@@ -10,15 +7,7 @@ document.getElementById("dark-mode-toggle").addEventListener("click", () => {
     const isDark = document.body.classList.toggle("dark");
     localStorage.setItem("darkMode", isDark);
 });
-document.getElementById("logout-btn").addEventListener("click", () => {
-    localStorage.removeItem("token");
-    window.location.href = "/login.html";
-});
 
-// --- Auth header helper ---
-function authHeaders() {
-    return { "Content-Type": "application/json", Authorization: "Bearer " + token };
-}
 
 // --- Toast ---
 function showToast(msg, type = "") {
@@ -42,14 +31,11 @@ let activeCategory = "";
 // --- Fetch templates ---
 async function loadTemplates() {
     try {
-        const res = await fetch("/api/templates", { headers: authHeaders() });
-        if (res.status === 401) { window.location.href = "/login.html"; return; }
+        const res = await fetch("/api/templates", { headers: { "Content-Type": "application/json" } });
         allTemplates = await res.json();
         renderTemplates();
 
         // Set username
-        const payload = JSON.parse(atob(token.split(".")[1]));
-        document.getElementById("user-display").textContent = payload.username || payload.email || "";
     } catch (e) {
         showToast("Failed to load templates", "error");
     }

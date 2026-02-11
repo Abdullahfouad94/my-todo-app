@@ -6,14 +6,14 @@ const router = express.Router();
 // GET /api/tasks
 router.get("/", (req, res) => {
     const allTasks = readTasks();
-    const userTasks = allTasks.filter(t => t.userId === req.user.id);
+    const userTasks = allTasks.filter(t => t.userId === "default");
     res.json(userTasks);
 });
 
 // GET /api/tasks/stats
 router.get("/stats", (req, res) => {
     const allTasks = readTasks();
-    const tasks = allTasks.filter(t => t.userId === req.user.id);
+    const tasks = allTasks.filter(t => t.userId === "default");
     const total = tasks.length;
     const completed = tasks.filter(t => t.completed).length;
     const remaining = total - completed;
@@ -47,7 +47,7 @@ router.post("/", (req, res) => {
         notes: notes || "",
         createdAt: new Date().toISOString(),
         completedAt: null,
-        userId: req.user.id,
+        userId: "default",
     };
     allTasks.push(newTask);
     writeTasks(allTasks);
@@ -61,8 +61,8 @@ router.put("/reorder", (req, res) => {
         return res.status(400).json({ error: "orderedIds array is required" });
     }
     const allTasks = readTasks();
-    const userTasks = allTasks.filter(t => t.userId === req.user.id);
-    const otherTasks = allTasks.filter(t => t.userId !== req.user.id);
+    const userTasks = allTasks.filter(t => t.userId === "default");
+    const otherTasks = allTasks.filter(t => t.userId !== "default");
 
     const taskMap = {};
     userTasks.forEach(t => { taskMap[t.id] = t; });
@@ -80,7 +80,7 @@ router.put("/reorder", (req, res) => {
 router.put("/:id", (req, res) => {
     const id = Number(req.params.id);
     const allTasks = readTasks();
-    const task = allTasks.find(t => t.id === id && t.userId === req.user.id);
+    const task = allTasks.find(t => t.id === id && t.userId === "default");
     if (!task) {
         return res.status(404).json({ error: "Task not found" });
     }
@@ -109,9 +109,9 @@ router.put("/:id", (req, res) => {
 // DELETE /api/tasks/completed
 router.delete("/completed", (req, res) => {
     let allTasks = readTasks();
-    allTasks = allTasks.filter(t => !(t.userId === req.user.id && t.completed));
+    allTasks = allTasks.filter(t => !(t.userId === "default" && t.completed));
     writeTasks(allTasks);
-    const remaining = allTasks.filter(t => t.userId === req.user.id).length;
+    const remaining = allTasks.filter(t => t.userId === "default").length;
     res.json({ message: "Completed tasks cleared", remaining });
 });
 
@@ -119,7 +119,7 @@ router.delete("/completed", (req, res) => {
 router.delete("/:id", (req, res) => {
     const id = Number(req.params.id);
     let allTasks = readTasks();
-    const index = allTasks.findIndex(t => t.id === id && t.userId === req.user.id);
+    const index = allTasks.findIndex(t => t.id === id && t.userId === "default");
     if (index === -1) {
         return res.status(404).json({ error: "Task not found" });
     }

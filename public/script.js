@@ -1,27 +1,9 @@
-// --- Auth Gate ---
-const token = localStorage.getItem("token");
-if (!token) {
-    window.location.href = "/login.html";
-}
-
-// --- Auth Fetch Helper ---
+// --- Fetch Helper ---
 async function authFetch(url, options = {}) {
-    const currentToken = localStorage.getItem("token");
-    if (!currentToken) {
-        window.location.href = "/login.html";
-        return;
-    }
-    const headers = {
-        ...options.headers,
-        Authorization: `Bearer ${currentToken}`,
-    };
-    const res = await fetch(url, { ...options, headers });
-    if (res.status === 401) {
-        localStorage.removeItem("token");
-        window.location.href = "/login.html";
-        return;
-    }
-    return res;
+    return fetch(url, {
+        ...options,
+        headers: { "Content-Type": "application/json", ...options.headers },
+    });
 }
 
 // --- DOM Elements ---
@@ -43,8 +25,6 @@ const statToday = document.getElementById("stat-today");
 const statWeek = document.getElementById("stat-week");
 const darkModeToggle = document.getElementById("dark-mode-toggle");
 const clearCompletedBtn = document.getElementById("clear-completed-btn");
-const logoutBtn = document.getElementById("logout-btn");
-const userDisplay = document.getElementById("user-display");
 
 let tasks = [];
 let draggedId = null;
@@ -60,21 +40,6 @@ darkModeToggle.addEventListener("click", () => {
     document.body.classList.toggle("dark");
     localStorage.setItem("darkMode", document.body.classList.contains("dark"));
 });
-
-// --- Logout ---
-logoutBtn.addEventListener("click", () => {
-    localStorage.removeItem("token");
-    window.location.href = "/login.html";
-});
-
-// --- Load current user ---
-async function loadUser() {
-    const res = await authFetch("/api/auth/me");
-    if (res) {
-        const user = await res.json();
-        userDisplay.textContent = user.username;
-    }
-}
 
 // --- Helpers ---
 function escapeHtml(str) {
@@ -162,34 +127,25 @@ function renderTasks() {
         li.dataset.id = task.id;
         if (task.completed) li.classList.add("completed");
         li.classList.add(`priority-${task.priority || "medium"}`);
-
-        // Drag attributes
         li.draggable = true;
 
-        // Main row
         const mainDiv = document.createElement("div");
         mainDiv.className = "task-main";
 
-        // Drag handle
         const handle = document.createElement("span");
         handle.className = "drag-handle";
         handle.textContent = "\u2630";
 
-        // Complete button
         const completeBtn = document.createElement("button");
         completeBtn.className = "complete-btn";
         completeBtn.title = "Toggle complete";
         completeBtn.innerHTML = task.completed ? "&#9745;" : "&#9744;";
 
-        // Task text
         const taskText = document.createElement("span");
         taskText.className = "task-text";
         taskText.textContent = task.text;
-
-        // Double-click to edit
         taskText.addEventListener("dblclick", () => startEditText(li, task));
 
-        // Category badge
         let categoryBadge = null;
         if (task.category) {
             categoryBadge = document.createElement("span");
@@ -197,23 +153,18 @@ function renderTasks() {
             categoryBadge.textContent = task.category;
         }
 
-        // Due date
         let dueDateSpan = null;
         if (task.dueDate) {
             dueDateSpan = document.createElement("span");
             dueDateSpan.className = "due-date";
-            if (isOverdue(task.dueDate) && !task.completed) {
-                dueDateSpan.classList.add("overdue");
-            }
+            if (isOverdue(task.dueDate) && !task.completed) dueDateSpan.classList.add("overdue");
             dueDateSpan.textContent = formatDate(task.dueDate);
         }
 
-        // Notes toggle
         const notesBtn = document.createElement("button");
         notesBtn.className = "notes-toggle";
         notesBtn.textContent = "Notes";
 
-        // Delete button
         const deleteBtn = document.createElement("button");
         deleteBtn.className = "delete-btn";
         deleteBtn.title = "Delete task";
@@ -227,7 +178,6 @@ function renderTasks() {
         mainDiv.appendChild(notesBtn);
         mainDiv.appendChild(deleteBtn);
 
-        // Details section (notes + timestamp)
         const details = document.createElement("div");
         details.className = "task-details";
 
@@ -244,15 +194,12 @@ function renderTasks() {
 
         details.appendChild(textarea);
         details.appendChild(timestamp);
-
         li.appendChild(mainDiv);
         li.appendChild(details);
 
-        // --- Events ---
         completeBtn.addEventListener("click", async () => {
             await authFetch(`/api/tasks/${task.id}`, {
                 method: "PUT",
-                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ completed: !task.completed }),
             });
             await loadTasks();
@@ -263,23 +210,18 @@ function renderTasks() {
             await loadTasks();
         });
 
-        notesBtn.addEventListener("click", () => {
-            details.classList.toggle("open");
-        });
+        notesBtn.addEventListener("click", () => details.classList.toggle("open"));
 
-        // Save notes on blur
         textarea.addEventListener("blur", async () => {
             if (textarea.value !== (task.notes || "")) {
                 await authFetch(`/api/tasks/${task.id}`, {
                     method: "PUT",
-                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ notes: textarea.value }),
                 });
                 await loadTasks();
             }
         });
 
-        // --- Drag & Drop ---
         li.addEventListener("dragstart", (e) => {
             draggedId = task.id;
             e.dataTransfer.effectAllowed = "move";
@@ -298,24 +240,19 @@ function renderTasks() {
             li.classList.add("drag-over");
         });
 
-        li.addEventListener("dragleave", () => {
-            li.classList.remove("drag-over");
-        });
+        li.addEventListener("dragleave", () => li.classList.remove("drag-over"));
 
         li.addEventListener("drop", async (e) => {
             e.preventDefault();
             li.classList.remove("drag-over");
             if (draggedId === null || draggedId === task.id) return;
-
             const orderedIds = tasks.map(t => t.id);
             const fromIdx = orderedIds.indexOf(draggedId);
             const toIdx = orderedIds.indexOf(task.id);
             orderedIds.splice(fromIdx, 1);
             orderedIds.splice(toIdx, 0, draggedId);
-
             await authFetch("/api/tasks/reorder", {
                 method: "PUT",
-                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ orderedIds }),
             });
             await loadTasks();
@@ -338,13 +275,12 @@ function renderTasks() {
 function startEditText(li, task) {
     const mainDiv = li.querySelector(".task-main");
     const textSpan = mainDiv.querySelector(".task-text");
-    if (mainDiv.querySelector(".task-edit-input")) return; // already editing
+    if (mainDiv.querySelector(".task-edit-input")) return;
 
     const editInput = document.createElement("input");
     editInput.type = "text";
     editInput.className = "task-edit-input";
     editInput.value = task.text;
-
     textSpan.replaceWith(editInput);
     editInput.focus();
     editInput.select();
@@ -354,7 +290,6 @@ function startEditText(li, task) {
         if (newText && newText !== task.text) {
             await authFetch(`/api/tasks/${task.id}`, {
                 method: "PUT",
-                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ text: newText }),
             });
             await loadTasks();
@@ -370,10 +305,7 @@ function startEditText(li, task) {
     editInput.addEventListener("blur", saveEdit);
     editInput.addEventListener("keydown", (e) => {
         if (e.key === "Enter") editInput.blur();
-        if (e.key === "Escape") {
-            editInput.value = task.text; // revert
-            editInput.blur();
-        }
+        if (e.key === "Escape") { editInput.value = task.text; editInput.blur(); }
     });
 }
 
@@ -392,16 +324,14 @@ form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const text = input.value.trim();
     if (text) {
-        const body = {
-            text,
-            priority: inputPriority.value,
-            category: inputCategory.value.trim(),
-            dueDate: inputDueDate.value || null,
-        };
         await authFetch("/api/tasks", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(body),
+            body: JSON.stringify({
+                text,
+                priority: inputPriority.value,
+                category: inputCategory.value.trim(),
+                dueDate: inputDueDate.value || null,
+            }),
         });
         await loadTasks();
         input.value = "";
@@ -414,8 +344,7 @@ form.addEventListener("submit", async (e) => {
 
 // --- Clear Completed ---
 clearCompletedBtn.addEventListener("click", async () => {
-    const completedCount = tasks.filter(t => t.completed).length;
-    if (completedCount === 0) return;
+    if (tasks.filter(t => t.completed).length === 0) return;
     await authFetch("/api/tasks/completed", { method: "DELETE" });
     await loadTasks();
 });
@@ -428,5 +357,4 @@ filterStatus.addEventListener("change", renderTasks);
 
 // --- Init ---
 initDarkMode();
-loadUser();
 loadTasks();

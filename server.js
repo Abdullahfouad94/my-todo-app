@@ -2,8 +2,6 @@ require("dotenv").config();
 const express = require("express");
 const path = require("path");
 
-const authMiddleware = require("./middleware/auth");
-const authRoutes = require("./routes/auth");
 const taskRoutes = require("./routes/tasks");
 const promptRoutes = require("./routes/prompts");
 const templateRoutes = require("./routes/templates");
@@ -19,17 +17,9 @@ app.get("/health", (req, res) => {
     res.status(200).json({ status: "ok" });
 });
 
-// Auth routes (unprotected)
-app.use("/api/auth", authRoutes);
-
-// Task routes (protected)
-app.use("/api/tasks", authMiddleware, taskRoutes);
-
-// Prompt routes (protected)
-app.use("/api/prompts", authMiddleware, promptRoutes);
-
-// Template routes (protected)
-app.use("/api/templates", authMiddleware, templateRoutes);
+app.use("/api/tasks", taskRoutes);
+app.use("/api/prompts", promptRoutes);
+app.use("/api/templates", templateRoutes);
 
 const server = app.listen(PORT, "0.0.0.0", () => {
     console.log(`Server running at http://0.0.0.0:${PORT}`);

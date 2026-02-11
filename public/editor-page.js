@@ -1,6 +1,3 @@
-// --- Auth guard ---
-const token = localStorage.getItem("token");
-if (!token) { window.location.href = "/login.html"; }
 
 // --- Dark mode ---
 if (localStorage.getItem("darkMode") === "true") document.body.classList.add("dark");
@@ -10,14 +7,7 @@ document.getElementById("dark-mode-toggle").addEventListener("click", () => {
     const isDark = document.body.classList.toggle("dark");
     localStorage.setItem("darkMode", isDark);
 });
-document.getElementById("logout-btn").addEventListener("click", () => {
-    localStorage.removeItem("token");
-    window.location.href = "/login.html";
-});
 
-function authHeaders() {
-    return { "Content-Type": "application/json", Authorization: "Bearer " + token };
-}
 
 function showToast(msg, type = "") {
     const t = document.getElementById("toast");
@@ -42,8 +32,6 @@ let isSaving = false;
 
 // --- Set username ---
 try {
-    const payload = JSON.parse(atob(token.split(".")[1]));
-    document.getElementById("user-display").textContent = payload.username || payload.email || "";
 } catch (e) {}
 
 // --- Load initial data ---
@@ -51,8 +39,7 @@ async function init() {
     if (editId) {
         document.getElementById("editor-page-title").textContent = "Edit Prompt";
         try {
-            const res = await fetch(`/api/prompts/${editId}`, { headers: authHeaders() });
-            if (res.status === 401) { window.location.href = "/login.html"; return; }
+            const res = await fetch(`/api/prompts/${editId}`, { headers: { "Content-Type": "application/json" } });
             if (!res.ok) { showToast("Prompt not found", "error"); return; }
             const prompt = await res.json();
             populateForm(prompt);
@@ -62,7 +49,7 @@ async function init() {
     } else if (templateId) {
         document.getElementById("editor-page-title").textContent = "New Prompt from Template";
         try {
-            const res = await fetch(`/api/templates/${templateId}`, { headers: authHeaders() });
+            const res = await fetch(`/api/templates/${templateId}`, { headers: { "Content-Type": "application/json" } });
             if (!res.ok) { showToast("Template not found", "error"); return; }
             const tpl = await res.json();
             populateForm({ ...tpl, title: tpl.title + " (copy)" });
@@ -287,13 +274,13 @@ async function savePrompt() {
         if (editId) {
             res = await fetch(`/api/prompts/${editId}`, {
                 method: "PUT",
-                headers: authHeaders(),
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload),
             });
         } else {
             res = await fetch("/api/prompts", {
                 method: "POST",
-                headers: authHeaders(),
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload),
             });
         }
